@@ -23,6 +23,9 @@ export const createDonation = async (req, res) => {
       return res.status(400).json({ message: 'Missing required fields', missingFields });
     }
 
+    // Handle uploaded image
+    const foodImage = req.file ? req.file.path : '';
+
     const donation = new Donation({
       donorId,
       foodType,
@@ -30,6 +33,7 @@ export const createDonation = async (req, res) => {
       quantityUnit,
       expiryDate,
       pickupLocation,
+      photoPickup: foodImage, // Store image path
     });
 
     const saved = await donation.save();
@@ -101,7 +105,10 @@ export const cancelDonation = async (req, res) => {
 export const updateDonationPhotos = async (req, res) => {
   try {
     const { id } = req.params;
-    const { photoPickup, photoDelivery } = req.body;
+
+    // Handle uploaded files
+    const photoPickup = req.files.photoPickup ? req.files.photoPickup[0].path : undefined;
+    const photoDelivery = req.files.photoDelivery ? req.files.photoDelivery[0].path : undefined;
 
     const updated = await Donation.findByIdAndUpdate(
       id,

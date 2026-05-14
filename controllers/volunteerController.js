@@ -39,19 +39,20 @@ export const updateVolunteerStatus = async (req, res) => {
   }
 };
 
-// Get volunteers assigned to this NGO who are available and accepted
+// Get volunteers assigned to this NGO who are accepted
 export const getAvailableVolunteers = async (req, res) => {
   try {
     const { ngoId } = req.params;
-
+    console.log('DEBUG getAvailableVolunteers ngoId=', ngoId);
+    
     const availableVolunteers = await User.find({
       role: 'volunteer',
       volunteerType: 'underNgo',
       ngoId,
-      ngoJoinStatus: 'accepted',
-      availability: 'available'
+      ngoJoinStatus: 'accepted'
     });
 
+    console.log('DEBUG availableVolunteers count=', availableVolunteers.length);
     res.status(200).json(availableVolunteers);
   } catch (err) {
     res.status(500).json({ message: 'Error fetching available volunteers', error: err.message });
